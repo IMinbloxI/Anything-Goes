@@ -1,0 +1,18 @@
+.sexy{
+    text-align:center;
+    color: #c60000;
+    font-size: 3cm;
+    align-items: center;
+
+}
+
+.normal {
+    color: white;
+    font-variant: small-caps;
+}
+
+.box{
+    width: 200px;
+    height: 200px;
+    background-color: chocolate;
+}

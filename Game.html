@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Catch the Dot Game</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f0f2f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    #game-area {
+      position: relative;
+      width: 80vw;
+      height: 60vh;
+      border: 2px solid #0077ff;
+      border-radius: 10px;
+      background: white;
+      overflow: hidden;
+    }
+
+    #dot {
+      width: 40px;
+      height: 40px;
+      background-color: #0077ff;
+      border-radius: 50%;
+      position: absolute;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    #scoreboard {
+      margin: 15px;
+      font-size: 1.2rem;
+      color: #333;
+    }
+
+    #start-btn {
+      padding: 10px 20px;
+      background: #0077ff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+
+    #start-btn:hover {
+      background-color: #005fcc;
+    }
+
+    #game-over {
+      font-size: 1.5rem;
+      color: red;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎯 Catch the Dot</h1>
+  <div id="scoreboard">
+    Score: <span id="score">0</span> | Time: <span id="time">30</span>s
+  </div>
+  <div id="game-area">
+    <div id="dot" style="display: none;"></div>
+  </div>
+  <button id="start-btn">Start Game</button>
+  <div id="game-over"></div>
+
+  <script>
+    const dot = document.getElementById('dot');
+    const scoreDisplay = document.getElementById('score');
+    const timeDisplay = document.getElementById('time');
+    const gameArea = document.getElementById('game-area');
+    const startBtn = document.getElementById('start-btn');
+    const gameOverDisplay = document.getElementById('game-over');
+
+    let score = 0;
+    let time = 30;
+    let gameInterval;
+    let countdownInterval;
+    let speed = 1000;
+
+    function getRandomPosition() {
+      const areaRect = gameArea.getBoundingClientRect();
+      const x = Math.random() * (areaRect.width - 40);
+      const y = Math.random() * (areaRect.height - 40);
+      return { x, y };
+    }
+
+    function moveDot() {
+      const pos = getRandomPosition();
+      dot.style.left = `${pos.x}px`;
+      dot.style.top = `${pos.y}px`;
+      dot.style.display = 'block';
+    }
+
+    function updateScore() {
+      score++;
+      scoreDisplay.textContent = score;
+      if (speed > 300) {
+        speed -= 30;
+        clearInterval(gameInterval);
+        gameInterval = setInterval(moveDot, speed);
+      }
+    }
+
+    function startGame() {
+      score = 0;
+      time = 30;
+      speed = 1000;
+      scoreDisplay.textContent = score;
+      timeDisplay.textContent = time;
+      gameOverDisplay.textContent = '';
+      startBtn.disabled = true;
+
+      moveDot();
+      gameInterval = setInterval(moveDot, speed);
+      countdownInterval = setInterval(() => {
+        time--;
+        timeDisplay.textContent = time;
+        if (time <= 0) {
+          endGame();
+        }
+      }, 1000);
+    }
+
+    function endGame() {
+      clearInterval(gameInterval);
+      clearInterval(countdownInterval);
+      dot.style.display = 'none';
+      startBtn.disabled = false;
+      gameOverDisplay.textContent = `Game Over! Your score: ${score}`;
+    }
+
+    dot.addEventListener('click', updateScore);
+    startBtn.addEventListener('click', startGame);
+  </script>
+
+</body>
+</html>
